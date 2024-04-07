@@ -12,6 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	ebiten.SetWindowSize(asteroids.ScreenWidth, asteroids.ScreenHeight)
 	ebiten.SetWindowTitle("Asteroids")
 	if err := ebiten.RunGame(game); err != nil {

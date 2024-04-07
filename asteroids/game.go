@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	ScreenWidth  = 420
-	ScreenHeight = 600
-	boardSize    = 4
+	ScreenWidth  = 800
+	ScreenHeight = 680
+	boardSize    = 8
 )
 
 // Game represents a game state.
@@ -22,11 +22,13 @@ func NewGame() (*Game, error) {
 	g := &Game{
 		input: NewInput(),
 	}
+
 	var err error
 	g.board, err = NewBoard(boardSize)
 	if err != nil {
 		return nil, err
 	}
+
 	return g, nil
 }
 
@@ -40,6 +42,7 @@ func (g *Game) Update() error {
 	if err := g.board.Update(g.input); err != nil {
 		return err
 	}
+
 	return nil
 }
 

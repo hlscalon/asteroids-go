@@ -26,6 +26,7 @@ func (d Direction) String() string {
 	case DirLeft:
 		return "Left"
 	}
+
 	panic("not reach")
 }
 
@@ -41,12 +42,12 @@ func (d Direction) Vector() (x, y int) {
 	case DirLeft:
 		return -1, 0
 	}
+
 	panic("not reach")
 }
 
 // Input represents the current key states.
-type Input struct {
-}
+type Input struct{}
 
 // NewInput generates a new Input object.
 func NewInput() *Input {
@@ -59,14 +60,18 @@ func (i *Input) Dir() (Direction, bool) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
 		return DirUp, true
 	}
+
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
 		return DirLeft, true
 	}
+
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
 		return DirRight, true
 	}
+
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
 		return DirDown, true
 	}
+
 	return 0, false
 }
