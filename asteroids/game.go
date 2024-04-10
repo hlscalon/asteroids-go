@@ -23,11 +23,7 @@ func NewGame() (*Game, error) {
 		input: NewInput(),
 	}
 
-	var err error
-	g.board, err = NewBoard(boardSize)
-	if err != nil {
-		return nil, err
-	}
+	g.board = NewBoard(boardSize)
 
 	return g, nil
 }

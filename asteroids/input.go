@@ -5,6 +5,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
+type Action int
 type Direction int
 
 const (
@@ -12,6 +13,10 @@ const (
 	DirRight
 	DirDown
 	DirLeft
+)
+
+const (
+	ActionShot Action = iota
 )
 
 // String returns a string representing the direction.
@@ -54,23 +59,31 @@ func NewInput() *Input {
 	return &Input{}
 }
 
-// Direction returns a currently pressed direDirectionection.
+// Direction returns a currently pressed Direction.
 // Direction returns false if no direction key is pressed.
 func (i *Input) Dir() (Direction, bool) {
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
 		return DirUp, true
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA) {
 		return DirLeft, true
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyD) {
 		return DirRight, true
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
 		return DirDown, true
+	}
+
+	return 0, false
+}
+
+func (i *Input) Action() (Action, bool) {
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		return ActionShot, true
 	}
 
 	return 0, false

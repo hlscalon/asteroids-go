@@ -1,70 +1,79 @@
 package asteroids
 
 import (
-	"errors"
-
 	"github.com/hajimehoshi/ebiten/v2"
 )
-
-var errTaskTerminated = errors.New("asteroids: task terminated")
-
-type task func() error
 
 // Board represents the game board.
 type Board struct {
 	size   int
 	player *Player
-	tasks  []task
-	// shots
+	shots  []*Shot
 	// rocks
 }
 
 // NewBoard generates a new Board with giving a size.
-func NewBoard(size int) (*Board, error) {
+func NewBoard(size int) *Board {
 	b := &Board{
 		size:   size,
 		player: NewPlayer(size),
+		shots:  make([]*Shot, 0),
 		// rocks
-		// shots
 	}
 
 	// Add random rocks
 
-	return b, nil
+	return b
 }
 
 // Update updates the board state.
 func (b *Board) Update(input *Input) error {
 	// Update rocks
-	// Update shots
 
-	if 0 < len(b.tasks) {
-		t := b.tasks[0]
-		if err := t(); err == errTaskTerminated {
-			b.tasks = b.tasks[1:]
-		} else if err != nil {
-			return err
+	shotsToRemove := make([]int, 0)
+	for idx, s := range b.shots {
+		if alive := s.Move(boardSize); !alive {
+			shotsToRemove = append(shotsToRemove, idx)
 		}
-		return nil
+	}
+
+	for _, idx := range shotsToRemove {
+		b.RemoveShot(idx)
 	}
 
 	if dir, ok := input.Dir(); ok {
-		if err := b.Move(dir); err != nil {
-			return err
-		}
+		b.Move(dir)
+	}
+
+	if action, ok := input.Action(); ok {
+		b.TakeAction(action)
 	}
 
 	return nil
 }
 
-// Move enqueues tile moving tasks.
-func (b *Board) Move(dir Direction) error {
-	// Move rocks
-	// Move shots
-
+func (b *Board) Move(dir Direction) {
 	b.player.Move(dir, b.size)
+}
 
-	return nil
+func (b *Board) TakeAction(action Action) {
+	switch action {
+	case ActionShot:
+		b.AddShot()
+	}
+}
+
+func (b *Board) AddShot() {
+	x, y := b.player.Pos()
+	b.shots = append(b.shots, NewShot(x, y))
+}
+
+func (b *Board) RemoveShot(idx int) {
+	// Se o tamanho é maior que idx, significa que idx existe
+	if len(b.shots) > idx {
+		b.shots[idx] = b.shots[len(b.shots)-1]
+		b.shots = b.shots[:len(b.shots)-1]
+	}
 }
 
 // Size returns the board size.
@@ -79,7 +88,9 @@ func (b *Board) Draw(boardImage *ebiten.Image) {
 	boardImage.Fill(backgroundColor)
 
 	// Draw rocks
-	// Draw shots
+	for _, s := range b.shots {
+		s.Draw(boardImage)
+	}
 
 	b.player.Draw(boardImage)
 }

@@ -12,11 +12,11 @@ const (
 )
 
 var (
-	tileImage = ebiten.NewImage(playerSize, playerSize)
+	playerImage = ebiten.NewImage(playerSize, playerSize)
 )
 
 func init() {
-	tileImage.Fill(color.White)
+	playerImage.Fill(color.White)
 }
 
 type PlayerPos struct {
@@ -26,16 +26,11 @@ type PlayerPos struct {
 
 type Player struct {
 	currentPos PlayerPos
-	nextPos    PlayerPos
 }
 
 func NewPlayer(boardSize int) *Player {
 	return &Player{
 		currentPos: PlayerPos{
-			x: 0,
-			y: boardSize - 1,
-		},
-		nextPos: PlayerPos{
 			x: 0,
 			y: boardSize - 1,
 		},
@@ -49,17 +44,17 @@ func (p *Player) Pos() (int, int) {
 func (p *Player) Move(dir Direction, boardSize int) {
 	x, y := dir.Vector()
 
-	if p.nextPos.x+x >= 0 && p.nextPos.x+x < boardSize {
-		p.nextPos.x += x
+	if p.currentPos.x+x >= 0 && p.currentPos.x+x < boardSize {
+		p.currentPos.x += x
 	}
 
-	if p.nextPos.y+y >= 0 && p.nextPos.y+y < boardSize {
-		p.nextPos.y += y
+	if p.currentPos.y+y >= 0 && p.currentPos.y+y < boardSize {
+		p.currentPos.y += y
 	}
 }
 
 func (p *Player) Draw(boardImage *ebiten.Image) {
-	ni, nj := p.nextPos.x, p.nextPos.y
+	ni, nj := p.currentPos.x, p.currentPos.y
 
 	op := &ebiten.DrawImageOptions{}
 
@@ -68,5 +63,5 @@ func (p *Player) Draw(boardImage *ebiten.Image) {
 
 	op.GeoM.Translate(float64(nx), float64(ny))
 	op.ColorScale.ScaleWithColor(frameColor)
-	boardImage.DrawImage(tileImage, op)
+	boardImage.DrawImage(playerImage, op)
 }
