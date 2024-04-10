@@ -26,6 +26,7 @@ type ShotPos struct {
 
 type Shot struct {
 	currentPos ShotPos
+	isAlive    bool
 }
 
 func NewShot(playerX, playerY int) *Shot {
@@ -34,7 +35,20 @@ func NewShot(playerX, playerY int) *Shot {
 
 	return &Shot{
 		currentPos: ShotPos{x, y},
+		isAlive:    true,
 	}
+}
+
+func (s *Shot) IsAlive() bool {
+	return s.isAlive
+}
+
+func (s *Shot) SetIsAlive(isAlive bool) {
+	s.isAlive = isAlive
+}
+
+func (s *Shot) Pos() (int, int) {
+	return s.currentPos.x, s.currentPos.y
 }
 
 func (s *Shot) Move() bool {

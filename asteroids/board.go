@@ -26,10 +26,10 @@ func NewBoard(size int) *Board {
 	}
 }
 
-func (b *Board) Update(input *Input) error {
+func (b *Board) RemoveShots() {
 	shotsToRemove := make([]int, 0)
 	for idx, s := range b.shots {
-		if alive := s.Move(); !alive {
+		if !s.IsAlive() {
 			shotsToRemove = append(shotsToRemove, idx)
 		}
 	}
@@ -37,10 +37,20 @@ func (b *Board) Update(input *Input) error {
 	for _, idx := range shotsToRemove {
 		b.RemoveShot(idx)
 	}
+}
 
+func (b *Board) MoveShots() {
+	for _, s := range b.shots {
+		if s.IsAlive() {
+			s.SetIsAlive(s.Move())
+		}
+	}
+}
+
+func (b *Board) RemoveRocks() {
 	rocksToRemove := make([]int, 0)
 	for idx, r := range b.rocks {
-		if alive := r.Move(boardSize); !alive {
+		if !r.IsAlive() {
 			rocksToRemove = append(rocksToRemove, idx)
 		}
 	}
@@ -48,6 +58,36 @@ func (b *Board) Update(input *Input) error {
 	for _, idx := range rocksToRemove {
 		b.RemoveRock(idx)
 	}
+}
+
+func (b *Board) MoveRocks() {
+	for _, r := range b.rocks {
+		if r.IsAlive() {
+			r.SetIsAlive(r.Move(boardSize))
+		}
+	}
+}
+
+func (b *Board) DetectCollisions() {
+	for _, s := range b.shots {
+		for _, r := range b.rocks {
+			shotX, shotY := s.Pos()
+			rockX, rockY := r.Pos()
+
+			if shotX == rockX && shotY == rockY {
+				s.SetIsAlive(false)
+				r.SetIsAlive(false)
+			}
+		}
+	}
+}
+
+func (b *Board) Update(input *Input) error {
+	b.DetectCollisions()
+	b.MoveShots()
+	b.RemoveShots()
+	b.MoveRocks()
+	b.RemoveRocks()
 
 	b.AddRandomRock()
 

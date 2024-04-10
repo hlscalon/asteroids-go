@@ -27,6 +27,7 @@ type RockPos struct {
 
 type Rock struct {
 	currentPos RockPos
+	isAlive    bool
 }
 
 func NewRock(playerX, playerY int) *Rock {
@@ -35,7 +36,20 @@ func NewRock(playerX, playerY int) *Rock {
 
 	return &Rock{
 		currentPos: RockPos{x, y},
+		isAlive:    true,
 	}
+}
+
+func (r *Rock) IsAlive() bool {
+	return r.isAlive
+}
+
+func (r *Rock) SetIsAlive(isAlive bool) {
+	r.isAlive = isAlive
+}
+
+func (r *Rock) Pos() (int, int) {
+	return r.currentPos.x, r.currentPos.y
 }
 
 func (r *Rock) Move(boardSize int) bool {
