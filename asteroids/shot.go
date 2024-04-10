@@ -37,7 +37,7 @@ func NewShot(playerX, playerY int) *Shot {
 	}
 }
 
-func (s *Shot) Move(boardSize int) bool {
+func (s *Shot) Move() bool {
 	if s.currentPos.y-1 >= 0 {
 		s.currentPos.y--
 
