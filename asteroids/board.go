@@ -1,6 +1,7 @@
 package asteroids
 
 import (
+	"log"
 	"math/rand"
 	"time"
 
@@ -77,23 +78,64 @@ func (b *Board) DetectCollisions() {
 			if shotX == rockX && shotY == rockY {
 				s.SetIsAlive(false)
 				r.SetIsAlive(false)
+
+				log.Printf("Colisão shot|rock: %d, %d", shotX, shotY)
 			}
 		}
 	}
 }
 
+func (b *Board) MoveEntities(input *Input) {
+	ch := make(chan int)
+
+	go func() {
+		b.MoveShots()
+
+		ch <- 1
+	}()
+
+	go func() {
+		b.MoveRocks()
+
+		ch <- 1
+	}()
+
+	go func() {
+		if dir, ok := input.Dir(); ok {
+			b.Move(dir)
+		}
+
+		ch <- 1
+	}()
+
+	<-ch
+	<-ch
+	<-ch
+}
+
+func (b *Board) RemoveEntities() {
+	ch := make(chan int)
+
+	go func() {
+		b.RemoveShots()
+
+		ch <- 1
+	}()
+
+	go func() {
+		b.RemoveRocks()
+		ch <- 1
+	}()
+
+	<-ch
+	<-ch
+}
+
 func (b *Board) Update(input *Input) error {
 	b.DetectCollisions()
-	b.MoveShots()
-	b.RemoveShots()
-	b.MoveRocks()
-	b.RemoveRocks()
-
+	b.MoveEntities(input)
+	b.RemoveEntities()
 	b.AddRandomRock()
-
-	if dir, ok := input.Dir(); ok {
-		b.Move(dir)
-	}
 
 	if action, ok := input.Action(); ok {
 		b.TakeAction(action)
