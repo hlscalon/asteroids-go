@@ -16,7 +16,7 @@ var (
 )
 
 func init() {
-	shotImage.Fill(color.Gray16{0xdddd})
+	shotImage.Fill(color.RGBA{0xed, 0xcf, 0xff, 0xff})
 }
 
 type ShotPos struct {

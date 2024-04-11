@@ -16,7 +16,7 @@ var (
 )
 
 func init() {
-	playerImage.Fill(color.White)
+	playerImage.Fill(color.RGBA{0xed, 0xcf, 0x72, 0xff})
 }
 
 type PlayerPos struct {

@@ -13,6 +13,7 @@ type Board struct {
 	player *Player
 	shots  []*Shot
 	rocks  []*Rock
+	score  Score
 
 	lastRockInserted time.Time
 }
@@ -70,19 +71,47 @@ func (b *Board) MoveRocks() {
 }
 
 func (b *Board) DetectCollisions() {
-	for _, s := range b.shots {
-		for _, r := range b.rocks {
-			shotX, shotY := s.Pos()
-			rockX, rockY := r.Pos()
+	ch := make(chan int)
 
-			if shotX == rockX && shotY == rockY {
-				s.SetIsAlive(false)
-				r.SetIsAlive(false)
+	go func() {
+		for _, s := range b.shots {
+			for _, r := range b.rocks {
+				shotX, shotY := s.Pos()
+				rockX, rockY := r.Pos()
 
-				log.Printf("Colisão shot|rock: %d, %d", shotX, shotY)
+				if shotX == rockX && shotY == rockY {
+					s.SetIsAlive(false)
+					r.SetIsAlive(false)
+
+					log.Printf("Colisão shot|rock: %d, %d", shotX, shotY)
+
+					b.score.Add()
+				}
 			}
 		}
-	}
+
+		ch <- 1
+	}()
+
+	go func() {
+		playerX, playerY := b.player.Pos()
+		for _, r := range b.rocks {
+			rockX, rockY := r.Pos()
+
+			if rockX == playerX && rockY == playerY {
+				log.Printf("Jogador morreu: %d, %d", rockX, rockY)
+				b.score.Reset()
+				r.SetIsAlive(false)
+
+				break
+			}
+		}
+
+		ch <- 1
+	}()
+
+	<-ch
+	<-ch
 }
 
 func (b *Board) MoveEntities(input *Input) {
@@ -208,5 +237,6 @@ func (b *Board) Draw(boardImage *ebiten.Image) {
 		r.Draw(boardImage)
 	}
 
+	b.score.Draw(boardImage)
 	b.player.Draw(boardImage)
 }

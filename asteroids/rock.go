@@ -17,7 +17,7 @@ var (
 )
 
 func init() {
-	rockImage.Fill(color.Gray16{0xdddd})
+	rockImage.Fill(color.NRGBA{0xa3, 0x49, 0xa4, 0x7f})
 }
 
 type RockPos struct {
@@ -53,7 +53,7 @@ func (r *Rock) Pos() (int, int) {
 }
 
 func (r *Rock) Move(boardSize int) bool {
-	delta := rand.Intn(10)
+	delta := rand.Intn(20)
 	if delta != 1 {
 		return true
 	}
