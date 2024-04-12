@@ -11,15 +11,23 @@ const (
 	rockMargin = 4
 )
 
+var rockExploding *ebiten.Image
+
+func init() {
+	rockExploding = spriteSheet.RockExplosion
+}
+
 type RockPos struct {
 	x int
 	y int
 }
 
 type Rock struct {
-	currentPos RockPos
-	isAlive    bool
-	image      *ebiten.Image
+	currentPos     RockPos
+	isAlive        bool
+	image          *ebiten.Image
+	isExploding    bool
+	explodingCount int
 }
 
 func NewRock(playerX, playerY int) *Rock {
@@ -27,9 +35,11 @@ func NewRock(playerX, playerY int) *Rock {
 	y := playerY
 
 	return &Rock{
-		currentPos: RockPos{x, y},
-		isAlive:    true,
-		image:      spriteSheet.Rocks[rand.Intn(len(spriteSheet.Rocks))],
+		currentPos:     RockPos{x, y},
+		isAlive:        true,
+		image:          spriteSheet.Rocks[rand.Intn(len(spriteSheet.Rocks))],
+		isExploding:    false,
+		explodingCount: 5,
 	}
 }
 
@@ -39,6 +49,20 @@ func (r *Rock) IsAlive() bool {
 
 func (r *Rock) SetIsAlive(isAlive bool) {
 	r.isAlive = isAlive
+}
+
+func (r *Rock) IsExploding() bool {
+	return r.isExploding
+}
+
+func (r *Rock) SetIsExploding(isExploding bool) {
+	r.isExploding = isExploding
+}
+
+func (r *Rock) ExplodingCount() int {
+	r.explodingCount--
+
+	return r.explodingCount
 }
 
 func (r *Rock) Pos() (int, int) {
@@ -68,5 +92,9 @@ func (r *Rock) Draw(boardImage *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(nx), float64(ny))
 
-	boardImage.DrawImage(r.image, op)
+	if r.isExploding {
+		boardImage.DrawImage(rockExploding, op)
+	} else {
+		boardImage.DrawImage(r.image, op)
+	}
 }

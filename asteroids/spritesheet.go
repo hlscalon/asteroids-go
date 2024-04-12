@@ -28,9 +28,10 @@ const tileSize = 64
 
 // SpriteSheet represents a collection of sprite images.
 type SpriteSheet struct {
-	Crown *ebiten.Image
-	Rocks []*ebiten.Image
-	Shot  *ebiten.Image
+	Crown         *ebiten.Image
+	Rocks         []*ebiten.Image
+	Shot          *ebiten.Image
+	RockExplosion *ebiten.Image
 }
 
 // LoadSpriteSheet loads the embedded SpriteSheet.
@@ -57,6 +58,8 @@ func LoadSpriteSheet() (*SpriteSheet, error) {
 	s.Rocks = append(s.Rocks, spriteAt(9, 2))
 
 	s.Shot = spriteAt(7, 4)
+
+	s.RockExplosion = spriteAt(9, 10)
 
 	return s, nil
 }

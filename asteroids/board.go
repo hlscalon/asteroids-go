@@ -64,8 +64,14 @@ func (b *Board) MoveShots() {
 func (b *Board) RemoveRocks() {
 	rocksToRemove := make([]int, 0)
 	for idx, r := range b.rocks {
-		if !r.IsAlive() {
-			rocksToRemove = append(rocksToRemove, idx)
+		if r.IsExploding() {
+			if r.ExplodingCount() == 0 {
+				r.SetIsExploding(false)
+			}
+		} else {
+			if !r.IsAlive() {
+				rocksToRemove = append(rocksToRemove, idx)
+			}
 		}
 	}
 
@@ -94,6 +100,7 @@ func (b *Board) DetectCollisions() {
 				if shotX == rockX && shotY == rockY {
 					s.SetIsAlive(false)
 					r.SetIsAlive(false)
+					r.SetIsExploding(true)
 
 					log.Printf("Colisão shot|rock: %d, %d", shotX, shotY)
 
