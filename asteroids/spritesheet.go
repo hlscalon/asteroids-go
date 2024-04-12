@@ -19,22 +19,21 @@ import (
 	"image"
 	_ "image/png"
 
+	"asteroids-go/resources/images"
+
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hlscalon/asteroids-go/resources/images"
 )
+
+const tileSize = 64
 
 // SpriteSheet represents a collection of sprite images.
 type SpriteSheet struct {
-	Floor  *ebiten.Image
-	Wall   *ebiten.Image
-	Statue *ebiten.Image
-	Tube   *ebiten.Image
-	Crown  *ebiten.Image
-	Portal *ebiten.Image
+	Crown *ebiten.Image
+	Rocks []*ebiten.Image
 }
 
 // LoadSpriteSheet loads the embedded SpriteSheet.
-func LoadSpriteSheet(tileSize int) (*SpriteSheet, error) {
+func LoadSpriteSheet() (*SpriteSheet, error) {
 	img, _, err := image.Decode(bytes.NewReader(images.Spritesheet_png))
 	if err != nil {
 		return nil, err
@@ -49,12 +48,12 @@ func LoadSpriteSheet(tileSize int) (*SpriteSheet, error) {
 
 	// Populate SpriteSheet.
 	s := &SpriteSheet{}
-	s.Floor = spriteAt(10, 4)
-	s.Wall = spriteAt(2, 3)
-	s.Statue = spriteAt(5, 4)
-	s.Tube = spriteAt(3, 4)
 	s.Crown = spriteAt(8, 6)
-	s.Portal = spriteAt(5, 6)
+
+	s.Rocks = append(s.Rocks, spriteAt(3, 2))
+	s.Rocks = append(s.Rocks, spriteAt(5, 2))
+	s.Rocks = append(s.Rocks, spriteAt(7, 2))
+	s.Rocks = append(s.Rocks, spriteAt(9, 2))
 
 	return s, nil
 }

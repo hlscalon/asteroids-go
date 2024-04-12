@@ -1,8 +1,6 @@
 package asteroids
 
 import (
-	"image/color"
-
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -11,12 +9,10 @@ const (
 	playerMargin = 4
 )
 
-var (
-	playerImage = ebiten.NewImage(playerSize, playerSize)
-)
+var playerImage *ebiten.Image
 
 func init() {
-	playerImage.Fill(color.RGBA{0xed, 0xcf, 0x72, 0xff})
+	playerImage = spriteSheet.Crown
 }
 
 type PlayerPos struct {

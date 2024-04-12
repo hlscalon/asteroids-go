@@ -1,7 +1,6 @@
 package asteroids
 
 import (
-	"image/color"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -12,14 +11,6 @@ const (
 	rockMargin = 4
 )
 
-var (
-	rockImage = ebiten.NewImage(rockSize, rockSize)
-)
-
-func init() {
-	rockImage.Fill(color.NRGBA{0xa3, 0x49, 0xa4, 0x7f})
-}
-
 type RockPos struct {
 	x int
 	y int
@@ -28,6 +19,7 @@ type RockPos struct {
 type Rock struct {
 	currentPos RockPos
 	isAlive    bool
+	image      *ebiten.Image
 }
 
 func NewRock(playerX, playerY int) *Rock {
@@ -37,6 +29,7 @@ func NewRock(playerX, playerY int) *Rock {
 	return &Rock{
 		currentPos: RockPos{x, y},
 		isAlive:    true,
+		image:      spriteSheet.Rocks[rand.Intn(len(spriteSheet.Rocks))],
 	}
 }
 
@@ -75,5 +68,6 @@ func (r *Rock) Draw(boardImage *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(nx), float64(ny))
 	op.ColorScale.ScaleWithColor(frameColor)
-	boardImage.DrawImage(rockImage, op)
+
+	boardImage.DrawImage(r.image, op)
 }

@@ -1,6 +1,7 @@
 package asteroids
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"time"
@@ -8,12 +9,22 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+var spriteSheet *SpriteSheet
+
+func init() {
+	var err error
+	spriteSheet, err = LoadSpriteSheet()
+	if err != nil {
+		panic(fmt.Errorf("failed to load embedded spritesheet: %s", err))
+	}
+}
+
 type Board struct {
 	size   int
 	player *Player
 	shots  []*Shot
 	rocks  []*Rock
-	score  Score
+	score  *Score
 
 	lastRockInserted time.Time
 }
@@ -22,6 +33,7 @@ func NewBoard(size int) *Board {
 	return &Board{
 		size:             size,
 		player:           NewPlayer(size),
+		score:            NewScore(),
 		shots:            make([]*Shot, 0, 20), // pré aloca 20 tiros
 		rocks:            make([]*Rock, 0, 20), // pŕe aloca 20 rochas
 		lastRockInserted: time.Now(),
