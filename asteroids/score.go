@@ -56,7 +56,6 @@ func (s *Score) Draw(boardImage *ebiten.Image) {
 
 	textOp := &text.DrawOptions{}
 	textOp.GeoM.Translate(nx, ny)
-	textOp.ColorScale.ScaleWithColor(frameColor)
 	textOp.PrimaryAlign = text.AlignCenter
 	textOp.SecondaryAlign = text.AlignCenter
 

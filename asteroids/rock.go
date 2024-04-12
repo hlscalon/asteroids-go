@@ -67,7 +67,6 @@ func (r *Rock) Draw(boardImage *ebiten.Image) {
 
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(nx), float64(ny))
-	op.ColorScale.ScaleWithColor(frameColor)
 
 	boardImage.DrawImage(r.image, op)
 }

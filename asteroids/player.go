@@ -58,6 +58,5 @@ func (p *Player) Draw(boardImage *ebiten.Image) {
 	ny := nj*playerSize + (nj+1)*playerMargin
 
 	op.GeoM.Translate(float64(nx), float64(ny))
-	op.ColorScale.ScaleWithColor(frameColor)
 	boardImage.DrawImage(playerImage, op)
 }

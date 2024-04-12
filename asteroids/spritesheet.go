@@ -30,6 +30,7 @@ const tileSize = 64
 type SpriteSheet struct {
 	Crown *ebiten.Image
 	Rocks []*ebiten.Image
+	Shot  *ebiten.Image
 }
 
 // LoadSpriteSheet loads the embedded SpriteSheet.
@@ -54,6 +55,8 @@ func LoadSpriteSheet() (*SpriteSheet, error) {
 	s.Rocks = append(s.Rocks, spriteAt(5, 2))
 	s.Rocks = append(s.Rocks, spriteAt(7, 2))
 	s.Rocks = append(s.Rocks, spriteAt(9, 2))
+
+	s.Shot = spriteAt(7, 4)
 
 	return s, nil
 }

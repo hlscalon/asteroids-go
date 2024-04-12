@@ -1,8 +1,6 @@
 package asteroids
 
 import (
-	"image/color"
-
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -11,12 +9,10 @@ const (
 	shotMargin = 4
 )
 
-var (
-	shotImage = ebiten.NewImage(shotSize, shotSize)
-)
+var shotImage *ebiten.Image
 
 func init() {
-	shotImage.Fill(color.RGBA{0xed, 0xcf, 0xff, 0xff})
+	shotImage = spriteSheet.Shot
 }
 
 type ShotPos struct {
@@ -70,6 +66,5 @@ func (s *Shot) Draw(boardImage *ebiten.Image) {
 	ny := nj*shotSize + (nj+1)*shotMargin
 
 	op.GeoM.Translate(float64(nx), float64(ny))
-	op.ColorScale.ScaleWithColor(frameColor)
 	boardImage.DrawImage(shotImage, op)
 }
