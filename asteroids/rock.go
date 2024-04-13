@@ -67,7 +67,7 @@ func (r *Rock) IsExploding() bool {
 
 func (r *Rock) SetIsExploding(isExploding bool) {
 	r.isExploding = isExploding
-	r.musicPlayer.Play()
+	r.musicPlayer.PlayOnUpdate()
 }
 
 func (r *Rock) ExplodingCount() int {

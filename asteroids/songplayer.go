@@ -52,7 +52,7 @@ func NewSongPlayer(audioContext *audio.Context) (*SongPlayer, error) {
 	return songPlayer, nil
 }
 
-func (p *SongPlayer) Play() {
+func (p *SongPlayer) PlayOnUpdate() {
 	p.playSong = true
 }
 
@@ -64,32 +64,16 @@ func (p *SongPlayer) Update() error {
 	default:
 	}
 
-	p.playSEIfNeeded()
-
-	return nil
-}
-
-func (p *SongPlayer) shouldPlaySE() bool {
 	if p.seBytes == nil {
-		// Bytes for the SE is not loaded yet.
-		return false
+		return nil
 	}
-
-	// if inpututil.IsKeyJustPressed(ebiten.KeyP) {
 
 	if p.playSong {
 		p.playSong = false
-		return true
+
+		sePlayer := p.audioContext.NewPlayerFromBytes(p.seBytes)
+		sePlayer.Play()
 	}
 
-	return false
-}
-
-func (p *SongPlayer) playSEIfNeeded() {
-	if !p.shouldPlaySE() {
-		return
-	}
-
-	sePlayer := p.audioContext.NewPlayerFromBytes(p.seBytes)
-	sePlayer.Play()
+	return nil
 }
