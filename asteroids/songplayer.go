@@ -6,9 +6,10 @@ import (
 	"io"
 	"log"
 
+	raudio "asteroids-go/resources/audio"
+
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
-	raudio "github.com/hajimehoshi/ebiten/v2/examples/resources/audio"
 )
 
 const (
