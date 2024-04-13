@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 
 var spriteSheet *SpriteSheet
@@ -20,16 +21,17 @@ func init() {
 }
 
 type Board struct {
-	size   int
-	player *Player
-	shots  []*Shot
-	rocks  []*Rock
-	score  *Score
+	size         int
+	player       *Player
+	shots        []*Shot
+	rocks        []*Rock
+	score        *Score
+	audioContext *audio.Context
 
 	lastRockInserted time.Time
 }
 
-func NewBoard(size int) *Board {
+func NewBoard(size int, audioContext *audio.Context) *Board {
 	return &Board{
 		size:             size,
 		player:           NewPlayer(size),
@@ -37,6 +39,7 @@ func NewBoard(size int) *Board {
 		shots:            make([]*Shot, 0, 20), // pré aloca 20 tiros
 		rocks:            make([]*Rock, 0, 20), // pŕe aloca 20 rochas
 		lastRockInserted: time.Now(),
+		audioContext:     audioContext,
 	}
 }
 
@@ -179,8 +182,15 @@ func (b *Board) RemoveEntities() {
 	<-ch
 }
 
+func (b *Board) UpdateEntities() {
+	for _, r := range b.rocks {
+		r.Update()
+	}
+}
+
 func (b *Board) Update(input *Input) error {
 	b.DetectCollisions()
+	b.UpdateEntities()
 	b.MoveEntities(input)
 	b.RemoveEntities()
 	b.AddRandomRock()
@@ -224,7 +234,7 @@ func (b *Board) AddRandomRock() {
 	x := rand.Intn(boardSize)
 	y := rand.Intn(boardSize / 3)
 
-	b.rocks = append(b.rocks, NewRock(x, y))
+	b.rocks = append(b.rocks, NewRock(x, y, b.audioContext))
 
 	b.lastRockInserted = time.Now()
 }

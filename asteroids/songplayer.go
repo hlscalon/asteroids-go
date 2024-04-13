@@ -6,25 +6,25 @@ import (
 	"io"
 	"log"
 
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	raudio "github.com/hajimehoshi/ebiten/v2/examples/resources/audio"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 const (
-	screenWidth  = 640
-	screenHeight = 480
-
 	sampleRate = 48000
 )
+
+func NewAudioContext() *audio.Context {
+	return audio.NewContext(sampleRate)
+}
 
 // SongPlayer represents the current audio state.
 type SongPlayer struct {
 	audioContext *audio.Context
 	seBytes      []byte
 	seCh         chan []byte
+	playSong     bool
 }
 
 func NewSongPlayer(audioContext *audio.Context) (*SongPlayer, error) {
@@ -52,7 +52,11 @@ func NewSongPlayer(audioContext *audio.Context) (*SongPlayer, error) {
 	return songPlayer, nil
 }
 
-func (p *SongPlayer) update() error {
+func (p *SongPlayer) Play() {
+	p.playSong = true
+}
+
+func (p *SongPlayer) Update() error {
 	select {
 	case p.seBytes = <-p.seCh:
 		close(p.seCh)
@@ -71,7 +75,10 @@ func (p *SongPlayer) shouldPlaySE() bool {
 		return false
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyP) {
+	// if inpututil.IsKeyJustPressed(ebiten.KeyP) {
+
+	if p.playSong {
+		p.playSong = false
 		return true
 	}
 
@@ -86,51 +93,3 @@ func (p *SongPlayer) playSEIfNeeded() {
 	sePlayer := p.audioContext.NewPlayerFromBytes(p.seBytes)
 	sePlayer.Play()
 }
-
-// type Game struct {
-// 	musicPlayer *Player
-// }
-
-// func NewGame() (*Game, error) {
-// 	audioContext := audio.NewContext(sampleRate)
-
-// 	m, err := NewPlayer(audioContext)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return &Game{
-// 		musicPlayer: m,
-// 	}, nil
-// }
-
-// func (g *Game) Update() error {
-// 	if g.musicPlayer != nil {
-// 		if err := g.musicPlayer.update(); err != nil {
-// 			return err
-// 		}
-// 	}
-
-// 	return nil
-// }
-
-// func (g *Game) Draw(screen *ebiten.Image) {
-// 	// empty
-// 	// interface method
-// }
-
-// func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
-// 	return screenWidth, screenHeight
-// }
-
-// func main() {
-// 	ebiten.SetWindowSize(screenWidth, screenHeight)
-// 	ebiten.SetWindowTitle("Audio (Ebitengine Demo)")
-// 	g, err := NewGame()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	if err := ebiten.RunGame(g); err != nil {
-// 		log.Fatal(err)
-// 	}
-// }

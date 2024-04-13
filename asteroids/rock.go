@@ -1,9 +1,11 @@
 package asteroids
 
 import (
+	"log"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 
 const (
@@ -28,11 +30,18 @@ type Rock struct {
 	image          *ebiten.Image
 	isExploding    bool
 	explodingCount int
+	musicPlayer    *SongPlayer
 }
 
-func NewRock(playerX, playerY int) *Rock {
+func NewRock(playerX, playerY int, audioContext *audio.Context) *Rock {
 	x := playerX
 	y := playerY
+
+	musicPlayer, err := NewSongPlayer(audioContext)
+	if err != nil {
+		log.Fatalf("Error song player: %v\n", err)
+		return nil
+	}
 
 	return &Rock{
 		currentPos:     RockPos{x, y},
@@ -40,6 +49,7 @@ func NewRock(playerX, playerY int) *Rock {
 		image:          spriteSheet.Rocks[rand.Intn(len(spriteSheet.Rocks))],
 		isExploding:    false,
 		explodingCount: 5,
+		musicPlayer:    musicPlayer,
 	}
 }
 
@@ -57,6 +67,7 @@ func (r *Rock) IsExploding() bool {
 
 func (r *Rock) SetIsExploding(isExploding bool) {
 	r.isExploding = isExploding
+	r.musicPlayer.Play()
 }
 
 func (r *Rock) ExplodingCount() int {
@@ -82,6 +93,14 @@ func (r *Rock) Move(boardSize int) bool {
 	}
 
 	return false
+}
+
+func (r *Rock) Update() {
+	if r.musicPlayer != nil {
+		if err := r.musicPlayer.Update(); err != nil {
+			log.Printf("Error updating music player: %v\n", err)
+		}
+	}
 }
 
 func (r *Rock) Draw(boardImage *ebiten.Image) {
