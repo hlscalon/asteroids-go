@@ -9,8 +9,10 @@ import (
 )
 
 const (
-	rockSize   = 80
-	rockMargin = 4
+	rockSize       = 80
+	rockMargin     = 4
+	movingCount    = 20
+	explodingCount = 5
 )
 
 var rockExploding *ebiten.Image
@@ -31,6 +33,7 @@ type Rock struct {
 	isExploding    bool
 	explodingCount int
 	musicPlayer    *SongPlayer
+	movingCount    int
 }
 
 func NewRock(playerX, playerY int, audioContext *audio.Context) *Rock {
@@ -48,8 +51,9 @@ func NewRock(playerX, playerY int, audioContext *audio.Context) *Rock {
 		isAlive:        true,
 		image:          spriteSheet.Rocks[rand.Intn(len(spriteSheet.Rocks))],
 		isExploding:    false,
-		explodingCount: 5,
+		explodingCount: explodingCount,
 		musicPlayer:    musicPlayer,
+		movingCount:    movingCount,
 	}
 }
 
@@ -80,14 +84,16 @@ func (r *Rock) Pos() (int, int) {
 	return r.currentPos.x, r.currentPos.y
 }
 
-func (r *Rock) Move(boardSize int) bool {
-	delta := rand.Intn(20)
-	if delta != 1 {
+func (r *Rock) Move(boardSize int) (isAlive bool) {
+	r.movingCount--
+	if r.movingCount > 0 {
 		return true
 	}
 
-	if r.currentPos.y+delta < boardSize {
-		r.currentPos.y += delta
+	r.movingCount = movingCount
+
+	if r.currentPos.y+1 < boardSize {
+		r.currentPos.y++
 
 		return true
 	}
