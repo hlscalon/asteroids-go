@@ -2,6 +2,7 @@ package asteroids
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 
 const (
@@ -12,15 +13,22 @@ const (
 
 // Game represents a game state.
 type Game struct {
-	input      *Input
-	board      *Board
-	boardImage *ebiten.Image
+	input       *Input
+	board       *Board
+	boardImage  *ebiten.Image
+	musicPlayer *SongPlayer
 }
 
 // NewGame generates a new Game object.
 func NewGame() (*Game, error) {
+	m, err := NewSongPlayer(audio.NewContext(sampleRate))
+	if err != nil {
+		return nil, err
+	}
+
 	g := &Game{
-		input: NewInput(),
+		input:       NewInput(),
+		musicPlayer: m,
 	}
 
 	g.board = NewBoard(boardSize)
@@ -37,6 +45,12 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 func (g *Game) Update() error {
 	if err := g.board.Update(g.input); err != nil {
 		return err
+	}
+
+	if g.musicPlayer != nil {
+		if err := g.musicPlayer.update(); err != nil {
+			return err
+		}
 	}
 
 	return nil
